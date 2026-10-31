@@ -144,6 +144,8 @@ mvn -f z-mask-starter/pom.xml test   # 2 例
 mvn -f z-mask-web/pom.xml test       # 4 例
 ```
 
+> **CI**：push / PR 自动跑 GitHub Actions（`.github/workflows/ci.yml`：JDK 17 + `mvn -B -ntp verify`）。
+
 **core 31 例**（15 + 16）：四种脱敏类型、minLevel 门控、类别兜底、无策略不脱敏、
 倒序替换位置正确、明细升序、幂等、null 安全；
 **「按命中脱敏」16 例**：与自识别结果一致、**识别器调用次数 = 0**、
