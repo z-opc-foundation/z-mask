@@ -33,6 +33,7 @@
 | 密钥按 `keyRef` 取（**明文密钥不入策略对象**） | ✅ | `spi/SecretResolver` |
 | 倒序替换 + 明细排回升序 | ✅ | `service/MaskService#mask` |
 | 脱敏明细自证（起止 / 原文 / 遮蔽后 / 策略 ID） | ✅ | `service/MaskResult$MaskedItem` |
+| **按已有命中脱敏**（不重扫，M2） | ✅ | `service/MaskService#mask(String, List)` / `#mask(String, SenseResult)` |
 | 策略集持久化（DB） | ❌ M2 | 当前策略集在代码里 |
 | 按业务场景切换策略集 | ❌ M2 | 编排层 z-biz-security 已留 `maskPolicySetId` 字段 |
 
@@ -50,6 +51,33 @@
 
 **倒序替换是关键**：正序替换会让后面命中的位置被前段长度变化推偏 ⇒ 替换错位。
 替换完把明细排回**位置升序**返回（审计自证用）。
+
+### ★ 两条入口：自识别 vs 按命中脱敏（M2）
+
+| 入口 | 场景 | 识别次数 |
+|---|---|---|
+| `mask(text)` | 本仓自用（单仓直接调） | 1（内部识别） |
+| `mask(text, hits)` | **调用方已有识别结果** | **0（不识别）** |
+| `mask(text, senseResult)` | 同上，多一道长度一致性校验 | **0（不识别）** |
+
+**为什么要有重载**：编排层为了做**拦截判定**必须先识别；若 MASK 阶段再识别一遍，
+看似「口径一致无害」，实则有两个真问题：
+1. **白扫两遍** —— 识别是「全文 × 规则集」线性扫描，规则集上量后是双倍开销；
+2. **★ 可能打架** —— 两次识别之间若规则集热更，拦截判定用的分级与脱敏用的分级
+   可能来自**不同规则集** ⇒ 「判了不拦，却按另一套规则脱了」⇒ 口径失真。
+
+**重载的兜底口径**（外部传入的命中列表不可信）：
+
+| 情况 | 处理 |
+|---|---|
+| 命中越界（start<0 / end≤start / end>文本长） | **跳过该条**（不抛异常） |
+| 命中重叠 | **与 z-sense 同算法消解**：级别高者**替换**旧命中，同级先注册者留 |
+| 识别结果与文本**长度对不上** | **退回自识别**（牺牲一次识别，换「不漏遮 + 不错位」） |
+| 命中列表为空 | 原样返回（该类别未配策略 ⇒ 不脱敏） |
+
+> ⚠ **消解口径必须与 z-sense 完全一致**：若本仓与上游口径不同 ⇒ 上游已消解的命中
+> 在这里被再消一次可能消出**不同结果** ⇒ 脱敏位置与识别位置对不上 ⇒ 错位遮蔽。
+> 这条是「按命中脱敏」路径最容易踩的坑，已写进单测。
 
 ### 策略匹配：minLevel 贯穿每一档
 
@@ -96,18 +124,26 @@ z-mask/
 └── z-mask-web/
     └── src/main/java/com/zifang/z/mask/web/
         ├── config/    MaskAutoConfiguration · MaskModuleDataSource · MaskHealthIndicator
-        └── api/       MaskHealthController
+        └── api/       MaskHealthController · MaskController
 ```
 
 ## 🧪 测试
 
 ```bash
 export JAVA_HOME=/Users/zifang/Library/Java/JavaVirtualMachines/corretto-17.0.19/Contents/Home
-mvn -f z-mask-core/pom.xml test
+mvn -f z-mask-core/pom.xml test    # 31 例
+mvn -f z-mask-web/pom.xml test     # 4 例
 ```
 
-**15 例全绿**：四种脱敏类型、minLevel 门控、类别兜底、无策略不脱敏、
-倒序替换位置正确、明细升序、幂等、null 安全。
+**core 31 例**（15 + 16）：四种脱敏类型、minLevel 门控、类别兜底、无策略不脱敏、
+倒序替换位置正确、明细升序、幂等、null 安全；
+**「按命中脱敏」16 例**：与自识别结果一致、**识别器调用次数 = 0**、
+空/ null 命中列表原样返回、越界命中跳过、重叠取更高级别、同级取先注册者、
+明细升序、倒序替换不错位、**长度契约破坏 ⇒ 退回自识别**、null 识别结果原样返回、
+minLevel 门控同样贯穿。
 
 > ⚠ 测试期望的星号数是**算出来的**：18 位 − prefix4 − suffix2 = **12 个星号**。
 > 写期望时别拍脑袋。
+>
+> ⚠ **「真不识别」必须用计数器验**：光断言「脱出来一样」会被「偷偷识别了第二次但结果碰巧相同」
+> 蒙混过去 ⇒ 用计数识别器数调用次数才是唯一可靠判据。
