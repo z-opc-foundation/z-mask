@@ -9,7 +9,7 @@
 ```
 
 边界一句话：**只做「怎么遮」**——不识别（z-sense 的活）、不管密钥（`SecretResolver` 的活）、
-不决定遮不遮（编排层 z-biz-security 的活）。
+不决定遮不遮（编排层 z-security 的活）。
 
 ## 2. 模块与依赖方向
 
@@ -108,4 +108,4 @@ z-mask/
 - 复跑与验收读数：[`_doc/005_testing/001_验收复跑.md`](_doc/005_testing/001_验收复跑.md)
 - 端口 / 环境变量 / 启动方式：[`_doc/002_deploy/00-deploy.md`](_doc/002_deploy/00-deploy.md)
 - 上游识别口径：z-sense [`_doc/001_arch/00-overview.md`](../../../z-sense/_doc/001_arch/00-overview.md)
-- 立项口径：lead [`002_项目需求/001_特性需求/015_z-biz-security_数据安全线`](../../../z-opc-foundation-lead/002_项目需求/001_特性需求/015_z-biz-security_数据安全线/)
+- 立项口径：lead [`002_项目需求/001_特性需求/015_z-security_数据安全线`](../../../z-opc-foundation-lead/002_项目需求/001_特性需求/015_z-security_数据安全线/)

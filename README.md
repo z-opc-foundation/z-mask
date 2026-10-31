@@ -3,9 +3,9 @@
 > **脱敏与遮蔽引擎** —— 按敏感命中位置执行遮蔽，策略即数据。
 > 边界一句话：**只做「怎么遮」，不识别、不管密钥、不决定遮不遮。**
 
-安全线四层能力栈的执行层。同族：`z-sense`（识别底座）· `z-watermark`（水印）· `z-audit`（审计）· `z-biz-security`（编排）。
+安全线四层能力栈的执行层。同族：`z-sense`（识别底座）· `z-watermark`（水印）· `z-audit`（审计）· `z-security`（编排）。
 
-立项文档：lead `002_项目需求/001_特性需求/015_z-biz-security_数据安全线`。
+立项文档：lead `002_项目需求/001_特性需求/015_z-security_数据安全线`。
 
 ## 📋 基本信息
 
@@ -35,7 +35,7 @@
 | 脱敏明细自证（起止 / 原文 / 遮蔽后 / 策略 ID） | ✅ | `service/MaskResult$MaskedItem` |
 | **按已有命中脱敏**（不重扫，M2） | ✅ | `service/MaskService#mask(String, List)` / `#mask(String, SenseResult)` |
 | 策略集持久化（DB） | ❌ M2 | 当前策略集在代码里 |
-| 按业务场景切换策略集 | ❌ M2 | 编排层 z-biz-security 已留 `maskPolicySetId` 字段 |
+| 按业务场景切换策略集 | ❌ M2 | 编排层 z-security 已留 `maskPolicySetId` 字段 |
 
 ## 🔑 核心口径
 

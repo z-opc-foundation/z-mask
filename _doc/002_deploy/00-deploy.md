@@ -2,7 +2,7 @@
 
 ## 1. 运行形态
 
-`z-mask-core` 是纯领域库，编排层（z-biz-security）按坐标直接依赖并在自己的请求路径上调用，**不必起进程**。
+`z-mask-core` 是纯领域库，编排层（z-security）按坐标直接依赖并在自己的请求路径上调用，**不必起进程**。
 `z-mask-web` 提供独立可跑的 REST 管控面（`ZMaskWebApplication`）：
 
 | 项 | 值 |
@@ -50,7 +50,7 @@ z.base.db.mask.password=
 ## 4. 建表
 
 **本仓无 DDL**：10 条默认策略内置在 `support/DefaultPolicies`，M1 不读库，因此没有本仓要建的表。
-安全线需要建表的是 z-audit（哈希链台账）与 z-biz-security（策略表），执行清单属**人工动作**，
+安全线需要建表的是 z-audit（哈希链台账）与 z-security（策略表），执行清单属**人工动作**，
 见 [`_doc/005_testing/001_验收复跑.md`](_doc/005_testing/001_验收复跑.md) §4。
 
 ## 5. 构建与验证
