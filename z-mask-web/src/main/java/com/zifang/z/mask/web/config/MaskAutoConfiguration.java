@@ -1,20 +1,21 @@
 package com.zifang.z.mask.web.config;
 
-import com.zifang.z.mask.core.service.MaskService;
-import com.zifang.z.mask.core.support.DefaultPolicies;
-import com.zifang.z.sense.core.service.SenseService;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
 /**
- * z-mask自动装配。
+ * z-mask <b>管控面（web）自动装配</b>。
  *
- * <p>宿主引用本仓时，只要把 {@code z-mask-web} 放进 classpath，
- * {@code META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports}
- * 会把本装配挂上 ⇒ 数据源 + 领域服务齐备。
+ * <p><b>只管部署关切</b>：本域数据源 + 健康检查。
+ * <b>引擎装配已拆到 {@code z-mask-starter}</b>（M2 #23）——
+ * {@link com.zifang.z.mask.core.service.MaskService} 由
+ * {@code com.zifang.z.mask.starter.config.MaskStarterAutoConfiguration} 提供，
+ * 本类不再重复定义（重复定义会靠 {@code @ConditionalOnMissingBean} 侥幸让位，但读代码的人会以为有两处真装配）。
+ *
+ * <p>宿主引用本仓时：只想嵌入脱敏能力 ⇒ 依赖 {@code z-mask-starter}（轻）；
+ * 想跑完整管控面 ⇒ 依赖 {@code z-mask-web}（它传递带上 starter）。
  *
  * <p>⚠️ 本装配**不扫描**包树（无 {@code @ComponentScan}）—— 跨域交互按组织口径走 HTTP 边界，
  * 不把别人的 jar 拖进本仓上下文。
@@ -24,26 +25,6 @@ import org.springframework.context.annotation.Import;
 @AutoConfiguration
 @Import(MaskModuleDataSource.class)
 public class MaskAutoConfiguration {
-
-    /**
-     * 脱敏服务（**默认策略集**）。
-     *
-     * <p>依赖注入 {@link SenseService}：脱敏**以识别结果为输入**。
-     *
-     * <p>⚠ **用 {@link ObjectProvider} 取识别服务，不直接注入**：
-     * 若写成两个 {@code @ConditionalOnMissingBean} 方法（脱敏服务 + 兜底识别服务），
-     * Spring 按方法注册顺序评估条件 ⇒ 脱敏服务先注册时容器里还没有识别服务 ⇒ **启动失败**。
-     * {@code getIfAvailable(Supplier)} 的语义是「容器里有就用容器的，没有就地建一个」⇒ 两种情况都成立。
-     *
-     * @param senseServiceProvider 识别服务提供者
-     * @return 脱敏服务
-     */
-    @Bean
-    @ConditionalOnMissingBean
-    public MaskService maskService(ObjectProvider<SenseService> senseServiceProvider) {
-        SenseService senseService = senseServiceProvider.getIfAvailable(SenseService::new);
-        return new MaskService(senseService, DefaultPolicies.policies());
-    }
 
     /**
      * 本域健康检查（探活用）。

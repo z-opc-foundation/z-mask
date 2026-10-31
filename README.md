@@ -17,7 +17,7 @@
 | 包名 | `com.zifang.z.mask.core.*` |
 | 依赖 | `z-sense-core`（**识别结果为输入**，反向不依赖） |
 | 端口 | 8095 |
-| 模块 | `z-mask-core` · `z-mask-web` |
+| 模块 | `z-mask-core` · `z-mask-starter` · `z-mask-web` |
 
 ## 🎯 能力清单
 
@@ -121,18 +121,27 @@ z-mask/
 │       ├── spi/       MaskStrategy · SecretResolver
 │       ├── service/   MaskService（门面）· BuiltinMaskStrategies · MaskResult
 │       └── support/   DefaultPolicies（10 条内置策略）
+├── z-mask-starter/
+│   └── src/main/java/com/zifang/z/mask/starter/config/
+│       └── MaskStarterAutoConfiguration   引擎装配（仅此一处）：ObjectProvider 取 SenseService
 └── z-mask-web/
     └── src/main/java/com/zifang/z/mask/web/
-        ├── config/    MaskAutoConfiguration · MaskModuleDataSource · MaskHealthIndicator
+        ├── config/    MaskAutoConfiguration（只管部署关切：数据源 + 健康检查，依赖 starter）
+        │              · MaskModuleDataSource · MaskHealthIndicator
         └── api/       MaskHealthController · MaskController
 ```
+
+> **引擎装配只有一处**：`MaskService` 由 starter 装配（`AutoConfiguration.imports`），
+> web 依赖 starter、不重复定义；识别服务（`SenseService`）由 starter 用 `ObjectProvider` 惰性取——
+> 有就用、没有就 `new` 兜底，且不依赖 bean 注册顺序。
 
 ## 🧪 测试
 
 ```bash
 export JAVA_HOME=/Users/zifang/Library/Java/JavaVirtualMachines/corretto-17.0.19/Contents/Home
-mvn -f z-mask-core/pom.xml test    # 31 例
-mvn -f z-mask-web/pom.xml test     # 4 例
+mvn -f z-mask-core/pom.xml test      # 31 例
+mvn -f z-mask-starter/pom.xml test   # 2 例
+mvn -f z-mask-web/pom.xml test       # 4 例
 ```
 
 **core 31 例**（15 + 16）：四种脱敏类型、minLevel 门控、类别兜底、无策略不脱敏、
@@ -141,6 +150,10 @@ mvn -f z-mask-web/pom.xml test     # 4 例
 空/ null 命中列表原样返回、越界命中跳过、重叠取更高级别、同级取先注册者、
 明细升序、倒序替换不错位、**长度契约破坏 ⇒ 退回自识别**、null 识别结果原样返回、
 minLevel 门控同样贯穿。
+
+**starter 2 例**（嵌入式装配，宿主模拟应用放 `com.example.embedhost` 无关包树 ⇒ 组件扫描不可能兜底）：
+纯宿主只靠 `AutoConfiguration.imports` 装出引擎且**真能遮蔽手机号**（不是空壳）、
+**imports 完整性逐行 `Class.forName` 纯机械校验**（正向用例抓不住包名笔误——Spring 侧有容错，这个才判得红）。
 
 > ⚠ 测试期望的星号数是**算出来的**：18 位 − prefix4 − suffix2 = **12 个星号**。
 > 写期望时别拍脑袋。

@@ -21,14 +21,18 @@ z-mask/
 │       ├── spi/       MaskStrategy（遮蔽算法扩展点）· SecretResolver（密钥外置）
 │       ├── service/   MaskService（门面）· BuiltinMaskStrategies · MaskResult
 │       └── support/   DefaultPolicies（10 条内置默认策略）
-└── z-mask-web/                     运行壳：数据源 + AutoConfiguration + health + HTTP 面（4 例）
+├── z-mask-starter/                 引擎装配（仅此一处，无 web/健康检查/数据源，2 例）
+│   └── config/    MaskStarterAutoConfiguration（ObjectProvider 惰性取 SenseService）
+└── z-mask-web/                     管控面部署：依赖 starter，只管部署关切（4 例）
     └── src/main/java/com/zifang/z/mask/web/
-        ├── config/    MaskAutoConfiguration · MaskModuleDataSource · MaskHealthIndicator
+        ├── config/    MaskAutoConfiguration（数据源 + 健康检查）· MaskModuleDataSource · MaskHealthIndicator
         └── api/       MaskController（/z-team/api/mask/apply）· MaskHealthController（/api/mask/health）
 ```
 
 依赖方向是**单向**的：`z-mask-core → z-sense-core`（识别结果作为输入），z-sense 反向不依赖本仓。
 全族四层（sense / mask / watermark / audit）互不循环，编排层是唯一横向拼装点。
+**引擎装配只有一处**（starter）：web 不重复定义 `MaskService`；识别服务由 starter 的
+`ObjectProvider` 惰性取，有就用、没有就 `new` 兜底。
 
 ## 3. 关键口径
 

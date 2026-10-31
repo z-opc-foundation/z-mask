@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.github.yuku123</groupId>
+        <artifactId>z-mask</artifactId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>z-mask-starter</artifactId>
+    <name>脱敏与遮蔽引擎 :: starter</name>
+    <packaging>jar</packaging>
+
+    <description>脱敏引擎的 Spring Boot starter：宿主引一个依赖即自动装配出脱敏服务（按命中位置遮蔽，策略即数据；无 web / 健康检查 / 数据源包袱）</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.github.yuku123</groupId>
+            <artifactId>z-mask-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- 自动装配本体所在（@AutoConfiguration / @ConditionalOnMissingBean）。 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+
+        <!-- 测试：验证「宿主只放 starter jar 也能装配出引擎」的嵌入式用例。 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>

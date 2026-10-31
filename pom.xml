@@ -57,6 +57,8 @@
 
     <modules>
         <module>z-mask-core</module>
+        <!-- starter = 引擎装配（宿主嵌入用，无 web / 健康检查 / 数据源包袱）；web = 管控面部署。 -->
+        <module>z-mask-starter</module>
         <module>z-mask-web</module>
     </modules>
 
@@ -92,6 +94,11 @@
             <dependency>
                 <groupId>io.github.yuku123</groupId>
                 <artifactId>z-mask-core</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.yuku123</groupId>
+                <artifactId>z-mask-starter</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
