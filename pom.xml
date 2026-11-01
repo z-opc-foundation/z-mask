@@ -4,14 +4,6 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!--
-        脱敏与遮蔽引擎 —— 脱敏与遮蔽引擎：策略化脱敏（掩码/哈希/部分保留/加密/自定义），消费敏感识别结果作为策略输入
-
-        工程形状照抄 z-biz / z-etl（core+web 两段式 + 自管根 pom）：
-          parent = io.github.yuku123:z-boot-parent:1.2.0（Java 17 / Spring Boot 3 火车口径）
-          版本   = CI-friendly ${revision} + flatten-maven-plugin(oss)
-          发版   = 发 Maven Central 口径具备（namespace io.github.yuku123），**本轮不发制品**
-    -->
     <parent>
         <groupId>io.github.yuku123</groupId>
         <artifactId>z-boot-parent</artifactId>
