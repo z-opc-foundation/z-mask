@@ -108,4 +108,4 @@ z-mask/
 - 复跑与验收读数：[`_doc/005_testing/001_验收复跑.md`](_doc/005_testing/001_验收复跑.md)
 - 端口 / 环境变量 / 启动方式：[`_doc/002_deploy/00-deploy.md`](_doc/002_deploy/00-deploy.md)
 - 上游识别口径：z-sense [`_doc/001_arch/00-overview.md`](../../../z-sense/_doc/001_arch/00-overview.md)
-- 立项口径：lead [`002_项目需求/001_特性需求/015_z-security_数据安全线`](../../../z-opc-foundation-lead/002_项目需求/001_特性需求/015_z-security_数据安全线/)
+- 立项口径：lead [`002_项目需求/001_特性需求/015_z-biz-security_数据安全线`](../../../z-opc-foundation-lead/002_项目需求/001_特性需求/015_z-biz-security_数据安全线/)
