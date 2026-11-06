@@ -13,7 +13,7 @@
 |---|---|
 | 层 | L3 能力仓（可被 Maven Central 口径消费；**本轮不发制品**） |
 | 坐标 | `io.github.yuku123:z-mask`，版本 `1.0.0` |
-| parent | `io.github.yuku123:z-boot-parent:1.2.0`（Java 17 / Spring Boot 3.3.13 火车） |
+| parent | `io.github.yuku123:z-boot-parent:1.2.1`（Java 17 / Spring Boot 3.3.13 火车） |
 | 包名 | `com.zifang.z.mask.core.*` |
 | 依赖 | `z-sense-core`（**识别结果为输入**，反向不依赖） |
 | 端口 | 8095 |
