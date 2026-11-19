@@ -2,6 +2,9 @@ package com.zifang.z.mask.web.api;
 
 import com.zifang.z.mask.core.service.MaskResult;
 import com.zifang.z.mask.core.service.MaskService;
+import com.zifang.z.meta.api.annotation.BizApi;
+import com.zifang.z.meta.api.annotation.BizField;
+import com.zifang.z.meta.api.annotation.BizParam;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,7 +48,8 @@ public class MaskController {
      * @return 脱敏结果
      */
     @PostMapping("/apply")
-    public ResponseEntity<Map<String, Object>> apply(@RequestBody MaskRequest request) {
+    @BizApi(summary = "脱敏一段文本", description = "脱敏一段文本。", tags = { "z-mask" })
+    public ResponseEntity<Map<String, Object>> apply(@RequestBody @BizParam(name = "request", type = BizField.FieldType.STRING, description = "请求体", position = BizParam.Position.BODY) MaskRequest request) {
         MaskService service = maskServiceProvider.getIfAvailable();
         if (service == null) {
             return ResponseEntity.status(503).body(error("脱敏服务未装配"));
@@ -96,3 +100,6 @@ public class MaskController {
         }
     }
 }
+
+
+

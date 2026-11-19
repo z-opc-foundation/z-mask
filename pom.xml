@@ -7,7 +7,7 @@
     <parent>
         <groupId>io.github.yuku123</groupId>
         <artifactId>z-boot-parent</artifactId>
-        <version>1.2.2</version>
+        <version>1.2.6</version>
         <relativePath/>
     </parent>
 
@@ -55,6 +55,7 @@
     </modules>
 
     <properties>
+        <z-meta.version>1.0.2</z-meta.version>
         <!-- 项目自身版本（CI-friendly 根，发版改这一处）。首版号 = 1.0.0。 -->
         <revision>1.0.0</revision>
 
@@ -103,6 +104,11 @@
                 <groupId>io.github.yuku123</groupId>
                 <artifactId>z-sense-core</artifactId>
                 <version>${z-sense.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.yuku123</groupId>
+                <artifactId>z-meta-api</artifactId>
+                <version>${z-meta.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
